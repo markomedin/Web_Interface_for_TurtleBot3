@@ -1,0 +1,171 @@
+body {
+  color: #c5c6c7;
+  background-color: #1f2833;
+  text-align: justify;
+}
+
+canvas {
+  background-color: #F2F2F2;
+}
+
+#xPositionInput, #yPositionInput, #thetaAngleInput, #locationInArrayPoints, #distanceToleranceInput,
+#wallPXSInput, #wallPYSInput, #wallPXEInput, #wallPYEInput, #wallHeightInput, #wallThicknessInput,
+#locationInArrayWalls {
+  width: 60px;
+}
+
+#mbLabel {
+  width: 160px;
+}
+
+#wallArrayMInput, #selectWallModel, #selectOperationMode {
+  width: 200px;
+}
+
+#wallArrayM, #importWalls {
+  width: 80px;
+}
+
+#connectedRobot, #disconnectedRobot {
+  width: 100px;
+}
+
+#connectionStatus {
+  width: 140px;
+}
+
+#programA1Form {
+  width: 360px;
+  height: 500px;
+}
+
+#programA1Form-part2 {
+  width: 450px;
+  height: 700px;
+}
+
+#platformS, #platformL {
+  width: 175px;
+}
+
+#showLaserScan, #showMapLaserScan {
+  width: 170px;
+}
+
+#createMap, #createGridMap {
+  width: 150px;
+}
+
+#showMapDiv, #showGridMapDiv {
+  width: 196px;
+}
+
+/* SWITCH */
+/* Sledeće linije koda stilizuju switch element. Linije koda su preuzete sa sledećeg linka: https://www.w3schools.com/howto/howto_css_switch.asp */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* RANGE */
+/* Sledeće linije koda stilizuju range element. Linije koda su preuzete sa sledećeg linka: https://www.w3schools.com/howto/howto_js_rangeslider.asp */
+.sliderRange {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #ccc;
+  outline: none;
+  opacity: 1;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.sliderRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border-color: #2196F3;
+  background: #2196F3;
+  cursor: pointer;
+}
+
+.sliderRange::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border-color: #2196F3;
+  background: #2196F3;
+  cursor: pointer;
+}
+
+/* INPUT TYPE: NUMBER */
+/* Sledeće linije koda uklanjaju strelice za promenu numeričke vrednosti u okviru opšteg prikaza input elementa za unos numeričkih vrednosti.  */
+/* Linije koda su preuzete sa sledećeg linka: https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -1,0 +1,10 @@
+<launch>
+  <arg name="KINECT1" default="$(optenv KINECT1 false)" />
+  <arg name="KINECT2" default="$(optenv KINECT2 false)" />
+  <!-- send turtlebot3 urdf to param server -->
+  <group>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro' --inorder KINECT1:=$(arg KINECT1) KINECT2:=$(arg KINECT2)" />
+  </group>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" />
+</launch>

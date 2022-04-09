@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="program_prvi_styles.css">
+    <title>VEB APLIKACIJA ZA LOKALIZACIJU I UPRAVLjANjE KRETANjEM AUTONOMNOG MOBILNOG ROBOTA</title>
+  </head>
+  <body>
+
+    <div class="container mb-4 mt-4">
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-7 col-xl-6 d-flex justify-content-center">
+          <canvas id="my_canvas" width="500" height="500"></canvas>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-5 col-xl-6 d-flex justify-content-center align-items-center">
+          <form id="programA1Form">
+            <div class="form-group mt-2 mb-2">
+              <label for="websocketServerAddress" class="mb-1">WebSocket server adresa:</label>
+              <input type="text" class="form-control d-flex align-items-center justify-content-center" id="websocketServerAddress">
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary" type="button" value="Poveži" id="connectedRobot">
+              <input class="btn btn-primary" type="button" value="Prekini" id="disconnectedRobot">
+              <input type="text" readonly class="form-control" style="text-align:center;" id="connectionStatus">
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <button class="btn btn-primary shadow-none" type="button" id="platformS">Ravan 5m<sup>2</sup></button>
+              <button class="btn btn-primary shadow-none" type="button" id="platformL">Ravan 10m<sup>2</sup></button>
+            </div>
+            <div class="formgroup d-flex align-items-center justify-content-start mb-2">
+              <label class="switch m-0">
+                <input type="checkbox" id="switchRobotTrajectoryPoint">
+                <span class="slider round"></span>
+              </label>
+              <label for="switchRobotTrajectoryPoint" class="pl-2 pr-2 m-0">Podesi [x, y, theta] robota ili tačke:</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="xPositionRange">x: </label>
+              <input type="range" class="sliderRange" id="xPositionRange">
+              <input type="number" class="text-center form-control ml-2" id="xPositionInput">
+              <label class="pl-2 m-0" for="xPositionInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="yPositionRange">y: </label>
+              <input type="range" class="sliderRange" id="yPositionRange">
+              <input type="number" class="text-center form-control ml-2" id="yPositionInput">
+              <label class="pl-2 m-0" for="yPositionInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="thetaAngleRange">theta: </label>
+              <input type="range" class="sliderRange" id="thetaAngleRange">
+              <input type="number" class="text-center form-control ml-2" id="thetaAngleInput">
+              <label class="pl-2 m-0" for="thetaAngleInput">[deg]</label>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary shadow-none" type="button" value="Dodaj Tačku" id="addPoint">
+              <input class="btn btn-primary shadow-none" type="button" value="Izmeni" id="changePoint">
+              <input class="btn btn-primary shadow-none" type="button" value="Obriši" id="deletePoint">
+              <input type="number" class="text-center form-control" id="locationInArrayPoints">
+            </div>
+            <div class="form-group m-0">
+              <textarea readonly class="form-control" id="robotDisplayTrajectoryPoints" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mb-4">
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-7 col-xl-6 d-flex justify-content-center" id="ros3djsDisplay">
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-5 col-xl-6 d-flex justify-content-center align-items-center">
+          <form id="programA1Form">
+            <div class="form-group mt-2 mb-2">
+              <label class="mb-1">Tolerancija distance:</label>
+              <div class="d-flex align-items-center justify-content-center m-0">
+                <input type="range" class="sliderRange" id="distanceToleranceRange">
+                <input type="number" class="text-center form-control ml-2" id="distanceToleranceInput">
+                <label class="pl-2 m-0" for="distanceToleranceInput">[cm]</label>
+              </div>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-start mb-2">
+              <label class="switch m-0">
+                <input type="checkbox" id="constantSpeed">
+                <span class="slider round"></span>
+              </label>
+              <label for="constantSpeed" class="pl-2 pr-2 m-0">Konstantna brzina uključena</label>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary shadow-none" type="button" value="Lasersko merenje" id="showLaserScan">
+              <input class="btn btn-primary shadow-none" type="button" value="Trenutna mapa" id="showMapLaserScan">
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary shadow-none" type="button" value="Kreiraj mapu" id="createMap">
+              <div class="form-group d-flex align-items-center justify-content-left m-0" id="showMapDiv">
+                <label class="switch m-0">
+                  <input type="checkbox" id="showMap">
+                  <span class="slider round"></span>
+                </label>
+                <label for="showMap" class="m-0 pl-2">Prikaži Mapu</label>
+              </div>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary shadow-none" type="button" value="Kreiraj Grid mapu" id="createGridMap">
+              <div class="form-group d-flex align-items-center justify-content-left m-0" id="showGridMapDiv">
+                <label class="switch m-0">
+                  <input type="checkbox" id="showGridMap">
+                  <span class="slider round"></span>
+                </label>
+                <label for="showGridMap" class="m-0 pl-2">Prikaži Grid Mapu</label>
+              </div>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-start mb-2">
+              <label class="switch m-0">
+                <input type="checkbox" id="positionGraph">
+                <span class="slider round"></span>
+              </label>
+              <label for="positionGraph" class="pl-2 pr-2 m-0">Prikaži grafik pozicije robota</label>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <select class="custom-select" id="selectOperationMode">
+                <option value="0" id="selectOption">Kretanje preko:</option>
+                <option value="1">Differential drive</option>
+                <option value="2">Line-based EKF</option>
+                <option value="3">EKF SLAM</option>
+                <option value="4">A* Path Search Algorithm</option>
+              </select>
+              <input class="btn btn-primary" type="button" value="Kreni" id="goRobot">
+              <input class="btn btn-primary" type="button" value="Stani" id="stopRobot">
+            </div>
+            <div class="form-group m-0">
+              <textarea readonly class="form-control" style="text-align:center;" id="robotDisplayData" rows="5"></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mb-4">
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 d-flex justify-content-center">
+        	<form id="programA1Form-part2">
+            <div class="form-group d-flex align-items-center justify-content-center mt-2 mb-1">
+              <p class="m-0">Podesi [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>, visina, širina] pramete prikaza zida:</p>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallPXSRange">x<sub>1</sub>: </label>
+              <input type="range" class="sliderRange" id="wallPXSRange">
+              <input type="number" class="text-center form-control ml-2" id="wallPXSInput">
+              <label class="pl-2 m-0" for="wallPXSInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallPYSRange">y<sub>1</sub>: </label>
+              <input type="range" class="sliderRange" id="wallPYSRange">
+              <input type="number" class="text-center form-control ml-2" id="wallPYSInput">
+              <label class="pl-2 m-0" for="wallPYSInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallPXERange">x<sub>2</sub>: </label>
+              <input type="range" class="sliderRange" id="wallPXERange">
+              <input type="number" class="text-center form-control ml-2" id="wallPXEInput">
+              <label class="pl-2 m-0" for="wallPXEInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallPYERange">y<sub>2</sub>: </label>
+              <input type="range" class="sliderRange" id="wallPYERange">
+              <input type="number" class="text-center form-control ml-2" id="wallPYEInput">
+              <label class="pl-2 m-0" for="wallPYEInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallHeightRange">visina: </label>
+              <input type="range" class="sliderRange" id="wallHeightRange">
+              <input type="number" class="text-center form-control ml-2" id="wallHeightInput">
+              <label class="pl-2 m-0" for="wallHeightInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center mb-2">
+              <label class="pr-2 m-0" for="wallThicknessRange">širina: </label>
+              <input type="range" class="sliderRange" id="wallThicknessRange">
+              <input type="number" class="text-center form-control ml-2" id="wallThicknessInput">
+              <label class="pl-2 m-0" for="wallThicknessInput">[cm]</label>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <input class="btn btn-primary shadow-none" type="button" value="Dodaj Zid" id="addWall">
+              <input class="btn btn-primary shadow-none" type="button" value="Izmeni" id="changeWall">
+              <input class="btn btn-primary shadow-none" type="button" value="Obriši" id="deleteWall">
+              <input type="number" class="text-center form-control" id="locationInArrayWalls">
+              <input class="btn btn-primary shadow-none" type="button" value="Poništi unos" id="deleteWalls">
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <label id="mbLabel" class="m-0" style="text-align: left;" for="wallArrayMInput">Dodaj gotovu matricu parametara:</label>
+              <div class="d-flex align-items-center justify-content-between m-0">
+                <input type="text" class="form-control" id="wallArrayMInput">
+                <input class="btn btn-primary ml-2" type="button" value="Unesi" id="wallArrayM">
+              </div>
+            </div>
+            <div class="form-group d-flex align-items-center justify-content-between mb-2">
+              <label id="mbLabel" class="m-0" style="text-align: left;" for="selectWallModel">Izaberi gotov model prikaza zida:</label>
+              <div class="d-flex align-items-center justify-content-between m-0">
+                <select class="custom-select" id="selectWallModel" style="text-align: center;">
+                  <option value="0" id="selectWallOption">Nijedan</option>
+                  <option value="1">ModelRoom4</option>
+                  <option value="2">ModelRoom5</option>
+                  <option value="3">ModelRoom6</option>
+                  <option value="4">ModelRoom10</option>
+                </select>
+                <input class="btn btn-primary ml-2" type="button" value="Izaberi" id="importWalls">
+              </div>
+            </div>
+            <div class="form-group mb-2">
+              <label for="wallArrayMDisplay" class="mb-1">Trenutna matrica parametara prikazanih zidova:</label>
+              <textarea readonly class="form-control" id="wallArrayMDisplay" rows="3"></textarea>
+            </div>
+            <div class="form-group d-flex justify-content-between m-0">
+              <a href="https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/">
+                <img src="./Logos/TBL.png" alt="TURTLEBOT3" style="width:88px;height:88px;">
+              </a>
+              <a href="http://automatika.etf.bg.ac.rs/">
+                <img src="./Logos/SSDL.png" alt="Signals&SystemsDepatment" style="width:88px;height:88px;">
+              </a>
+              <a href="https://www.etf.bg.ac.rs/">
+                <img src="./Logos/ETFL.png" alt="ETF" style="width:88px;height:88px;">
+              </a>
+              <a href="http://www.bg.ac.rs/">
+                <img src="./Logos/BUL.png" alt="UniversityOfBelgrade" style="width:88px;height:88px;">
+              </a>
+              <a href="https://www.ros.org/">
+                <img src="./Logos/ROSL.png" alt="ROS" style="width:88px;height:88px;">
+              </a>
+            </div>
+        	</form>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 d-flex justify-content-center">
+        	<form id="programA1Form-part2">
+            <div class="form-group d-flex align-items-center justify-content-center mt-2 mb-2">
+              <p class="p-0 m-0">Predmet rada predstavlja veb grafičko korisnički interfejs za lokalizaciju i upravljanje kretanjem mobilnog robota TurtleBot3.
+                 Cilj rada je implementacija lokalizacije i upravljanja kretanjem mobilnog robota uz pomoć metoda diferencijalnog pogona, linijski baziranog EKF
+                 (od eng. <em>Line-based Extended Kalman Filter</em>), EKF-SLAM (od eng. <em>Extended Kalman Filter - Simultaneous Localization and Mapping</em>)
+                 i algoritma A* (od eng. <em>A-star</em>) za pretragu i planiranje trajektorije. Koristiće se <em>Javascript</em> programski jezik za izradu grafičko
+                 korisničkog interfejsa. Za realizaciju implementacije koristiće se ROS (od eng. <em>Robot Operating System</em>) kao osnova uz pakete i programski
+                 protokol za komunikaciju <em>Rosbridge</em>. Za testiranje koristiće se <em>Gazebo</em> simulator i veb pretraživač <em>Mozilla Firefox</em>. Realizovana
+                 implementacija će se moći koristiti na svim uređajima koji imaju mrežnu konekciju i na kojima je moguće pokrenuti neki od standardnih veb pretraživača.
+              </p>
+            </div>
+            <div class="form-group m-0">
+              <p class="p-0 mb-1">O Autoru</p>
+              <img class="mr-2 mb-2"src="./Author/MarkoMedin.png" alt="Image of Marko Medin" align="left" style="width:150px;height:160px;border-radius: 15px;">
+              <p class="p-0 m-0">Marko Medin, rođen 30.10.1992. godine u Beogradu, završio je osnovnu školu "Desanka Maksimović" u Beogradu.
+                Osmu Beogradsku gimnaziju u Beogradu završio je odličnim uspehom. Elektrotehnički fakultet upisao je 2011. godine.
+                Diplomirao je na Odseku za signale i sisteme 2018. godine. Diplomski rad odbranio je u septembru 2018. godine
+                ocenom 10. Diplomske akademske – master studije na Elektrotehničkom fakultetu u Beogradu, na Modulu za signale i
+                sisteme upisao je u oktobru 2018. godine.
+              </p>
+            </div>
+        	</form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@6.6.4/dist/math.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/three@0.89.0/build/three.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/eventemitter2@5.0.1/lib/eventemitter2.min.js"></script>
+    <script src="https://static.robotwebtools.org/threejs/current/ColladaLoader.js"></script>
+    <script src="https://static.robotwebtools.org/threejs/current/STLLoader.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1.1.0/build/roslib.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ros3d@0.18.0/build/ros3d.min.js"></script>
+    <script src="program_prvi_script.js"></script>
+  </body>
+</html>
